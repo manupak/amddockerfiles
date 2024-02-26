@@ -1,0 +1,69 @@
+ARG MUID=1080
+ARG MGID=1081
+ARG USERNAME=developer
+
+FROM rocm/pytorch-private:rocm13360_445_ubuntu22.04_py3.9_pytorch_tunablegemm-temp_aed2c82_with_apex_v2
+
+RUN apt-get update
+RUN apt-get install netcat-openbsd
+
+# LLVM
+# RUN wget https://apt.llvm.org/llvm.sh
+# RUN chmod +x llvm.sh
+# RUN ./llvm.sh 18
+
+# Here is all personal preference, with a few notes on software you may find useful
+# RUN apt-add-repository ppa:kelleyk/emacs && apt-add-repository ppa:martin-frost/thoughtbot-rcm && apt-get update
+RUN apt-get install -y vim zsh zsh-doc tmux git less man man-db mlocate \
+    silversearcher-ag keychain htop
+
+RUN apt-get install -y libbz2-dev liblzma-dev libssl-dev libreadline-dev
+
+# Arcanist is needed for upstream, rocm-debug-agent is useful when debugging
+RUN apt-get -y install arcanist rocm-debug-agent
+RUN updatedb
+
+# Arcanist is needed for upstream, rocm-debug-agent is useful when debugging
+RUN apt-get -y install arcanist rocm-debug-agent
+RUN updatedb
+
+ARG MUID
+ARG MGID
+ARG USERNAME
+
+RUN addgroup --gid ${MGID} ${USERNAME}
+RUN useradd -d /home/${USERNAME} -g ${MGID} --no-create-home -u ${MUID} --shell /usr/bin/zsh ${USERNAME}
+RUN adduser ${USERNAME} sudo
+RUN adduser ${USERNAME} video
+RUN adduser ${USERNAME} render
+# The /var is only needed on lockhart
+RUN mkdir /home/${USERNAME} /var/${USERNAME}
+RUN chown ${USERNAME}:${USERNAME} /home/${USERNAME} /var/${USERNAME}
+
+# Make sudo work without a password
+# RUN sed -i~ -e 's/%sudo\tALL=(ALL:ALL) ALL/%sudo\tALL=(ALL:ALL) NOPASSWD:ALL/g' /etc/sudoers
+# RUN visudo -c
+
+# --------------------- Section 4: MIGraphX dependencies ---------------
+WORKDIR /MIGraphXDeps
+RUN pip3 install setuptools wheel
+RUN pip3 install onnxruntime==1.10.0
+RUN pip3 install https://github.com/RadeonOpenCompute/rbuild/archive/master.tar.gz
+RUN pip3 install asciidoc
+ENV MIGRAPHX_REF=develop
+RUN wget https://raw.githubusercontent.com/ROCmSoftwarePlatform/AMDMIGraphX/${MIGRAPHX_REF}/requirements.txt \
+    && wget https://raw.githubusercontent.com/ROCmSoftwarePlatform/AMDMIGraphX/${MIGRAPHX_REF}/dev-requirements.txt \
+    && wget https://raw.githubusercontent.com/ROCmSoftwarePlatform/AMDMIGraphX/${MIGRAPHX_REF}/rbuild.ini
+RUN echo $(git ls-remote https://github.com/ROCmSoftwarePlatform/AMDMIGraphX ${MIGRAPHX_REF}) > migraphx-deps-commit-hash
+RUN rbuild prepare -d $PWD -s develop --cxx=/opt/rocm/llvm/bin/clang++ --cc=/opt/rocm/llvm/bin/clang
+# Remove rocMLIR version as per MIGraphX requirements
+# as this image is being used for CI with tip of rocMLIR
+# that will be built in the job.
+RUN cget remove -p $PWD ROCmSoftwarePlatform/rocMLIR -y
+
+# CHANGE THIS
+USER ${USERNAME}
+WORKDIR /home/${USERNAME}
+ENV HOME=/home/${USERNAME}
+# Keep container alive
+CMD tmux new-session -d && tail -f /dev/null
