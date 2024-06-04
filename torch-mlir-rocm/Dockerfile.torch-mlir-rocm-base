@@ -73,4 +73,7 @@ RUN curl -fsSL https://bazel.build/bazel-release.pub.gpg \
 RUN apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
+### install python cmake
+RUN python3.11 -m pip install cmake
+
 WORKDIR /main_checkout/torch-mlir
