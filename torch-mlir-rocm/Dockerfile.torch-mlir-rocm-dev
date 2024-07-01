@@ -1,7 +1,7 @@
 ARG MUID=1000
 ARG MGID=1000
 ARG USERNAME=developer
-ARG RENDERGID=110
+ARG RENDERGID=109
  
 FROM mkarunar/torch-mlir-rocm-base:latest
   
@@ -9,6 +9,11 @@ ARG MUID
 ARG MGID
 ARG USERNAME
 ARG RENDERGID
+
+# install miopen
+
+RUN apt-get update
+RUN apt-get install -y miopen-hip
  
 RUN addgroup --gid ${MGID} ${USERNAME}
 RUN useradd -d /home/${USERNAME} -g ${MGID} --no-create-home -u ${MUID} --shell /usr/bin/bash ${USERNAME}

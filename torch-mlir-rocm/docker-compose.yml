@@ -29,6 +29,6 @@ services:
       - type: bind
         source: "${HOME}"
         target: "${HOME}"
-      - type: bind
-        source: /mnt/nas_share/migraphx/models
-        target: /mnt/nas_share/migraphx/models
+      # - type: bind
+        # source: /mnt/nas_share/migraphx/models
+          #        target: /mnt/nas_share/migraphx/models
