@@ -1,0 +1,42 @@
+ARG MUID=1000
+ARG MGID=1000
+ARG USERNAME=developer
+ARG RENDERGID=109
+ 
+FROM mkarunar/torch-mlir-migraphx-rocm-base:latest
+  
+ARG MUID
+ARG MGID
+ARG USERNAME
+ARG RENDERGID
+
+# install miopen
+
+RUN apt-get update
+RUN apt-get install -y miopen-hip
+ 
+RUN addgroup --gid ${MGID} ${USERNAME}
+RUN useradd -d /home/${USERNAME} -g ${MGID} --no-create-home -u ${MUID} --shell /usr/bin/bash ${USERNAME}
+RUN adduser ${USERNAME} sudo
+RUN adduser ${USERNAME} video
+RUN addgroup render --gid ${RENDERGID}
+RUN adduser ${USERNAME} render
+# The /var is only needed on lockhart
+RUN mkdir /home/${USERNAME} /var/${USERNAME}
+RUN chown ${USERNAME}:${USERNAME} /home/${USERNAME} /var/${USERNAME}
+ 
+# Make sudo work without a password
+RUN sed -i~ -e 's/%sudo\tALL=(ALL:ALL) ALL/%sudo\tALL=(ALL:ALL) NOPASSWD:ALL/g' /etc/sudoers
+RUN visudo -c
+
+# Make python3 default
+RUN echo 'make python 3 default'; \
+    rm -f /usr/bin/python && ln -s /usr/bin/python3.11 /usr/bin/python;
+ 
+# CHANGE THIS
+USER ${USERNAME}
+WORKDIR /home/${USERNAME}
+ENV HOME=/home/${USERNAME}
+
+# Keep container alive
+CMD tail -f /dev/null

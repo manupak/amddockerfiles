@@ -1,0 +1,34 @@
+version: "3.4"
+services:
+  torch_mlir_dev:
+    # Your Dockerfile location
+    build:
+      context: .
+      dockerfile: Dockerfile.torch-mlir-migraphx-rocm-dev
+      args:
+        MUID: "${MUID}"
+        MGID: "${MGID}"
+        USERNAME: "${USER}"
+    # Change this
+    image: "${USER}/torch-mlir-migraphx-dev"
+    cap_add:
+      - SYS_PTRACE
+    # CHANGE THIS
+    container_name: "${USER}-torch-mlir-migraphx-dev"
+    # Using Share the GPU resources on the same node for shared GPUs (edit: not so much, it breaks things)
+    devices:
+      - /dev/kfd
+      - /dev/dri
+    network_mode: "host"
+    security_opt:
+      - "seccomp=unconfined"
+    tmpfs: # Remove this section if you don't use VS code
+      - "${HOME}/.vscode-server:exec,uid=${MUID},gid=${MGID}"
+    volumes:
+      # CHANGE THIS TO YOUR HOME DIRECTORY
+      - type: bind
+        source: "${HOME}"
+        target: "${HOME}"
+      # - type: bind
+        # source: /mnt/nas_share/migraphx/models
+          #        target: /mnt/nas_share/migraphx/models
