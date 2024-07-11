@@ -1,7 +1,7 @@
 ARG BASE_IMG=ubuntu:22.04
 FROM ${BASE_IMG} as dev-base
 
-ARG ROCM_DEB_REPO=http://repo.radeon.com/rocm/apt/6.1.1/
+ARG ROCM_DEB_REPO=http://repo.radeon.com/rocm/apt/6.1.3/
 ARG ROCM_BUILD_NAME=jammy
 ARG ROCM_BUILD_NUM=main
 ARG ROCM_PATH=/opt/rocm-6.1
