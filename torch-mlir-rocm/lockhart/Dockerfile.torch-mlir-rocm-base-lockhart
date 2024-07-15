@@ -3,6 +3,8 @@ FROM ${BASE_IMG} as dev-base
 
 ENV http_proxy=http://172.23.0.3:3128
 ENV https_proxy=http://172.23.0.3:3128
+ENV HTTP_PROXY=http://172.23.0.3:3128
+ENV HTTPS_PROXY=http://172.23.0.3:3128
 # Proxy settings for the cluster
 RUN echo "http_proxy=http://172.23.0.3:3128" >>/etc/environment
 RUN echo "https_proxy=http://172.23.0.3:3128" >>/etc/environment

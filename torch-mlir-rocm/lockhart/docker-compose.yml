@@ -11,6 +11,11 @@ services:
         USERNAME: "${USER}"
     # Change this
     image: "${USER}/torch-mlir-dev"
+    environment:
+      HTTP_PROXY: http://172.23.0.3:3128
+      HTTPS_PROXY: http://172.23.0.3:3128
+      http_proxy: http://172.23.0.3:3128
+      https_proxy: http://172.23.0.3:3128
     cap_add:
       - SYS_PTRACE
     # CHANGE THIS
