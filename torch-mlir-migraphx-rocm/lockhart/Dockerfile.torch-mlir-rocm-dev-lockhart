@@ -3,7 +3,7 @@ ARG MGID=1000
 ARG USERNAME=developer
 ARG RENDERGID=109
  
-FROM mkarunar/torch-mlir-rocm-base:latest
+FROM mkarunar/torch-mlir-rocm-base-lockhart:latest
   
 ARG MUID
 ARG MGID

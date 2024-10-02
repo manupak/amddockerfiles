@@ -14,10 +14,10 @@ RUN touch /etc/apt/apt.conf.d/00proxy.conf
 RUN echo Acquire::http::proxy '"http://172.23.0.3:3128";' >>/etc/apt/apt.conf.d/00proxy.conf
 RUN echo Acquire::https::proxy '"http://172.23.0.3:3128";' >>/etc/apt/apt.conf.d/00proxy.conf
 
-ARG ROCM_DEB_REPO=http://repo.radeon.com/rocm/apt/6.1.1/
+ARG ROCM_DEB_REPO=http://repo.radeon.com/rocm/apt/6.2/
 ARG ROCM_BUILD_NAME=jammy
 ARG ROCM_BUILD_NUM=main
-ARG ROCM_PATH=/opt/rocm-6.1
+ARG ROCM_PATH=/opt/rocm-6.2
 
 # Disable apt-key parse waring. If someone knows how to do whatever the "proper"
 # thing is then feel free. The warning complains about parsing apt-key output,

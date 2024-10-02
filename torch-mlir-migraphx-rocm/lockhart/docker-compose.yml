@@ -4,17 +4,22 @@ services:
     # Your Dockerfile location
     build:
       context: .
-      dockerfile: Dockerfile.torch-mlir-rocm-dev
+      dockerfile: Dockerfile.torch-mlir-rocm-dev-lockhart
       args:
         MUID: "${MUID}"
         MGID: "${MGID}"
         USERNAME: "${USER}"
     # Change this
-    image: "${USER}/torch-mlir-dev"
+    image: "${USER}/torch-migraphx-mlir-dev-lockhart"
+    environment:
+      HTTP_PROXY: http://172.23.0.3:3128
+      HTTPS_PROXY: http://172.23.0.3:3128
+      http_proxy: http://172.23.0.3:3128
+      https_proxy: http://172.23.0.3:3128  
     cap_add:
       - SYS_PTRACE
     # CHANGE THIS
-    container_name: "${USER}-torch-mlir-dev"
+    container_name: "${USER}-torch-migraphx-mlir-dev-lockhart"
     # Using Share the GPU resources on the same node for shared GPUs (edit: not so much, it breaks things)
     devices:
       - /dev/kfd
