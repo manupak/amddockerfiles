@@ -10,6 +10,8 @@ ARG MGID
 ARG USERNAME
 ARG RENDERGID
 
+RUN echo ${USERNAME}
+
 # install miopen
 
 RUN apt-get update
@@ -19,15 +21,16 @@ RUN addgroup --gid ${MGID} ${USERNAME}
 RUN useradd -d /home/${USERNAME} -g ${MGID} --no-create-home -u ${MUID} --shell /usr/bin/bash ${USERNAME}
 RUN adduser ${USERNAME} sudo
 RUN adduser ${USERNAME} video
-RUN addgroup render --gid ${RENDERGID}
-RUN adduser ${USERNAME} render
+# RUN addgroup render --gid ${RENDERGID}
+RUN usermod -aG ${RENDERGID} ${USERNAME}
+# RUN adduser ${USERNAME} render
 # The /var is only needed on lockhart
 RUN mkdir /home/${USERNAME} /var/${USERNAME}
 RUN chown ${USERNAME}:${USERNAME} /home/${USERNAME} /var/${USERNAME}
  
 # Make sudo work without a password
 RUN sed -i~ -e 's/%sudo\tALL=(ALL:ALL) ALL/%sudo\tALL=(ALL:ALL) NOPASSWD:ALL/g' /etc/sudoers
-RUN visudo -c
+# RUN visudo -c
 
  
 # CHANGE THIS
