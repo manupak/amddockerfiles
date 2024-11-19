@@ -1,7 +1,7 @@
 ARG MUID=1000
 ARG MGID=1000
 ARG USERNAME=developer
-ARG RENDERGID=109
+ARG RENDERGID=110
  
 FROM mkarunar/torch-mlir-rocm-base:latest
   
@@ -21,7 +21,7 @@ RUN addgroup --gid ${MGID} ${USERNAME}
 RUN useradd -d /home/${USERNAME} -g ${MGID} --no-create-home -u ${MUID} --shell /usr/bin/bash ${USERNAME}
 RUN adduser ${USERNAME} sudo
 RUN adduser ${USERNAME} video
-# RUN addgroup render --gid ${RENDERGID}
+RUN addgroup render --gid ${RENDERGID}
 RUN usermod -aG ${RENDERGID} ${USERNAME}
 # RUN adduser ${USERNAME} render
 # The /var is only needed on lockhart

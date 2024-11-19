@@ -1,11 +1,11 @@
-ARG BASE_IMG=registry-hy-harbor.amd.com/rocm-plus-docker/compute-rocm-dkms-component-staging-profiler:866-ubuntu-22.04-stg2
+ARG BASE_IMG=ubuntu:22.04
 FROM ${BASE_IMG} as dev-base
 
 # Commenting the following as I use a base docker with some newer rocm components
-# ARG ROCM_DEB_REPO=http://repo.radeon.com/rocm/apt/6.2/
-# ARG ROCM_BUILD_NAME=jammy
-# ARG ROCM_BUILD_NUM=main
-# ARG ROCM_PATH=/opt/rocm-6.2
+ARG ROCM_DEB_REPO=http://repo.radeon.com/rocm/apt/6.2.4/
+ARG ROCM_BUILD_NAME=jammy
+ARG ROCM_BUILD_NUM=main
+ARG ROCM_PATH=/opt/rocm-6.2.4
 
 # Disable apt-key parse waring. If someone knows how to do whatever the "proper"
 # thing is then feel free. The warning complains about parsing apt-key output,
@@ -41,21 +41,21 @@ RUN apt-get update && \
 
 # Commenting the following as I use a base docker with some newer rocm components
 # Add ROCm build distribution
-# RUN wget --no-check-certificate -qO - http://repo.radeon.com/rocm/rocm.gpg.key 2>/dev/null | apt-key add -
-# RUN echo "deb [arch=amd64] $ROCM_DEB_REPO $ROCM_BUILD_NAME $ROCM_BUILD_NUM" > /etc/apt/sources.list.d/rocm.list
-# 
-# RUN echo 'Package: *\nPin: release o=repo.radeon.com\nPin-Priority: 600' \
-#     | tee /etc/apt/preferences.d/rocm-pin-600
-# RUN cat /etc/apt/preferences.d/rocm-pin-600
-#
-# RUN apt-get update
-# RUN apt-get install -y \
-#     rocm-dev \
-#     rocm-cmake \
-#     rocminfo \
-#     rocprofiler-dev \
-#     rocblas \
-#     rocblas-dev
+ RUN wget --no-check-certificate -qO - http://repo.radeon.com/rocm/rocm.gpg.key 2>/dev/null | apt-key add -
+ RUN echo "deb [arch=amd64] $ROCM_DEB_REPO $ROCM_BUILD_NAME $ROCM_BUILD_NUM" > /etc/apt/sources.list.d/rocm.list
+ 
+ RUN echo 'Package: *\nPin: release o=repo.radeon.com\nPin-Priority: 600' \
+     | tee /etc/apt/preferences.d/rocm-pin-600
+ RUN cat /etc/apt/preferences.d/rocm-pin-600
+
+ RUN apt-get update
+ RUN apt-get install -y \
+     rocm-dev \
+     rocm-cmake \
+     rocminfo \
+     rocprofiler-dev \
+     rocblas \
+     rocblas-dev
 
 ######## Bazel ########
 WORKDIR /install-bazel
