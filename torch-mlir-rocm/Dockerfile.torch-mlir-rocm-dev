@@ -30,7 +30,7 @@ RUN chown ${USERNAME}:${USERNAME} /home/${USERNAME} /var/${USERNAME}
  
 # Make sudo work without a password
 RUN sed -i~ -e 's/%sudo\tALL=(ALL:ALL) ALL/%sudo\tALL=(ALL:ALL) NOPASSWD:ALL/g' /etc/sudoers
-# RUN visudo -c
+RUN visudo -c
 
  
 # CHANGE THIS
